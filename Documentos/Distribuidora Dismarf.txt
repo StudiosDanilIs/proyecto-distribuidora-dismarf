@@ -1,0 +1,55 @@
+Desarrollo de una aplicación móvil con arquitectura Offline-first para el monitoreo Predictivo y trazabilidad de la cadena de frío Alimentaria mediante nodos IoT en la Distribuidora Dismarf, San Cristóbal - Táchira.
+
+"Gestión de Datos, Sistemas de Información"
+
+Enfoque y Utilidad Comunitaria: Resuelve la pérdida de productos perecederos y congelados en distribuidoras de alimentos debido a fallas en las cavas cuarto, cuartos fríos o cortes eléctricos. Beneficia directamente a los distribuidores, comerciantes y consumidores finales, garantizando la calidad e inocuidad alimentaria.
+
+    Descripción General: En los almacenes de distribución alimentaria, la inestabilidad eléctrica pone en riesgo constante la cadena de frío. Un sistema compuesto por hardware muy económico lee la temperatura y humedad. Esta información viaja a una arquitectura de microservicios y puede ser consultada por el personal de almacén y logística mediante una aplicación móvil que funciona incluso si se cae el internet local.
+
+Tecnologías a Utilizar:
+	
+Backend: Microservicios (Node.js/Python), API Gateway (Nginx/Kong).
+	
+Bases de Datos (Políglota): PostgreSQL (inventario y usuarios) , MongoDB (telemetría de los sensores) , Redis (caché y bróker de mensajes).
+
+Móvil: Aplicación en React Native con almacenamiento en SQLite o WatermelonDB para ser Offline-First.
+
+Hardware: Placa ESP32 y sensores DHT11 o DHT22.
+
+Infraestructura: Todo montado en contenedores Docker sobre un servidor Linux Ubuntu.
+
+Funcionalidades Principales y Avanzadas: Los supervisores pueden registrar inspecciones de calidad y auditorías sanitarias en la app sin internet; al reconectarse, un Sync Engine resuelve conflictos y actualiza la base de datos.
+
+Aspectos Metodológicos: El equipo debe usar una Metodología Ágil como Scrum. Se deben presentar Sprints de 2 semanas con Demo técnica obligatoria. Es ideal para iterar entre el hardware, la base de datos y la app.
+
+Estimación de Costos y Viabilidad: Altamente viable. Se emplea hardware muy económico, con placas y sensores de bajo costo.
+
+cosas que se podrías agregar 
+
+1. Sensor Magnético de Puerta (Reed Switch)
+
+Este es el "rey" de las mejoras para cadenas de frío. Es un sensor compuesto por dos piececitas de plástico con imanes por dentro. Una va en el marco de la nevera y la otra en la puerta.
+
+    ¿Para qué sirve? Te avisa si el personal médico o de almacén dejó la puerta de la nevera mal cerrada. Muchas veces la temperatura sube no porque se fue la luz, sino por un error humano.
+
+    La ventaja técnica (Interrupciones): ¿Recuerdas el modo Deep Sleep del que hablamos? El ESP32 tiene pines especiales que soportan "interrupciones de hardware". Esto significa que si la puerta se abre, el sensor magnético envía un pulso eléctrico que despierta al ESP32 instantáneamente, sin tener que esperar los 5 o 10 minutos programados.
+
+    Costo: Menos de $1 USD. Solo usa un pin digital del ESP32.
+
+2. Detección Inmediata de Falla Eléctrica
+
+Ya tienes la batería para que el ESP32 siga vivo, pero puedes agregar un par de resistencias (que cuestan centavos) para leer el voltaje de la fuente principal de la pared.
+
+    ¿Para qué sirve? El sistema no tiene que esperar a que la temperatura suba para enviar una alerta. En el momento exacto en que la luz del centro de salud o la distribuidora se corta, el ESP32 lo detecta y envía una notificación push a tu app: "Alerta: Falla eléctrica en Nevera Principal. Funcionando con batería".
+
+    Beneficio: Le da al personal un tiempo de reacción valiosísimo (horas de ventaja) antes de que la temperatura siquiera empiece a cambiar.
+
+3. Alarma Física Local (Buzzer y LED RGB)
+
+Tu aplicación móvil avisa a las personas que están lejos o en sus casas, pero ¿qué pasa con la enfermera o el bodeguero que está caminando justo al lado de la nevera?
+
+    ¿Para qué sirve? Le agregas un pequeño parlante (buzzer activo) y un LED que cambie de color (verde, amarillo, rojo).
+
+    Funcionamiento: Si la puerta queda abierta más de 60 segundos, o la temperatura pasa el límite, el nodo en la nevera empieza a pitar y a parpadear en rojo de forma local. Es una barrera de seguridad extra que no depende de internet.
+
+    Costo: Alrededor de $1.50 USD por ambos componentes.
