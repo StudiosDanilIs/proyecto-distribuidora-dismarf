@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  # Servicio 1: Base de Datos Relacional
+  postgres_dismarf:
+    # Usamos la versión "alpine" porque pesa muchísimo menos, ideal para tu HDD
+    image: postgres:15-alpine
+    container_name: bd_postgres_dismarf
+    restart: always
+    environment:
+      # Credenciales de acceso (luego las cambiaremos para producción)
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: superpassword123
+      POSTGRES_DB: inventario_dismarf
+    ports:
+      # Conecta el puerto 5432 de tu laptop al puerto 5432 del contenedor
+      - "5433:5432"
+    volumes:
+      # Esto evita que los datos se borren si apagas la computadora
+      - postgres_data:/var/lib/postgresql/data
+
+# Declaramos el volumen persistente
+volumes:
+  postgres_data:

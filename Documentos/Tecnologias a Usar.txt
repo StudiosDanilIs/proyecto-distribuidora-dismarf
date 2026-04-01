@@ -1,0 +1,12 @@
+APLICACIONES PARA INSTALAR DE MANERA OBLIGATORIA EN LA CREACION DEL PROYECTO
+	* Git o Github preferiblemente Github
+	* Visual Studio Code (VS Code) 
+	* Node.Js Versión LTS ultima Versión https://www.youtube.com/watch?v=kC56yUZCKu4
+	* Docker Desktop https://www.youtube.com/watch?v=IMqYPAwX3iM
+Al instalar el Docker poner este documento en esta dirección es para limitar el uso de ram, cpu en Docker porque si no te consume todos los recursos 
+C:\Users\Daniel\.wslconfig
+estes es el archivo lo nombras como .wslconfig lo haces con el blog de notas
+[wsl2]
+memory=3GB
+processors=2
+swap=1GB
