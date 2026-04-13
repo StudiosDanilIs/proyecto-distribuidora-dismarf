@@ -1,0 +1,93 @@
+Módulo 1: Identidad y Seguridad (Vía Gateway -> PostgreSQL)
+
+No requieren Token en los Headers.
+
+1. Login de Usuario (Para obtener el Token)
+
+    Método: POST
+
+    URL: http://localhost:4000/api/core/auth/login
+
+    Body (JSON):
+{
+    "email": "admin@studiosdaniels.com",
+    "password": "clave_segura_123"
+}
+Resultado: Status 200 OK. Copia el Token generado.
+
+Módulo 2: Gestión de Cavas (Vía Gateway -> PostgreSQL)
+
+TODAS requieren configurar el Token en la pestaña Auth (Bearer).
+
+2. Crear una Cava
+
+    Método: POST
+
+    URL: http://localhost:4000/api/core/cavas
+
+    Body (JSON):
+{
+    "nombre": "Cava Sur",
+    "ubicacion": "Pasillo B",
+    "mac_esp32": "11:22:33:44:55:66"
+}
+Resultado: Status 201 Created.
+
+3. Obtener el listado de Cavas
+
+    Método: GET
+
+    URL: http://localhost:4000/api/core/cavas
+
+    Resultado: Status 200 OK con el inventario completo.
+
+4. Actualizar una Cava
+
+    Método: PUT
+
+    URL: http://localhost:4000/api/core/cavas/1 (El número final es el ID de la cava)
+
+    Body (JSON):
+{
+    "nombre": "Cava Sur Actualizada",
+    "ubicacion": "Pasillo C",
+    "temp_min": -20.00,
+    "temp_max": -10.00,
+    "estado": true
+}
+Resultado: Status 200 OK.
+
+5. Eliminar una Cava
+
+    Método: DELETE
+
+    URL: http://localhost:4000/api/core/cavas/1
+
+    Resultado: Status 200 OK.
+
+Módulo 3: Telemetría y Sensores (Vía Gateway -> MongoDB)
+
+El hardware es ligero, esta ruta no requiere Token.
+
+6. Simular Ingesta del ESP32
+
+    Método: POST
+
+    URL: http://localhost:4000/api/iot/ingest
+
+    Body (JSON):
+{
+    "mac_esp32": "11:22:33:44:55:66",
+    "temperatura": -16.5,
+    "humedad": 50.1,
+    "puerta_abierta": true
+}
+Resultado: Status 201 Created.
+
+7. Consultar Historial de Gráficas para la App Móvil
+
+    Método: GET
+
+    URL: http://localhost:4000/api/iot/history/11:22:33:44:55:66 (Sustituye la MAC por la que quieras consultar)
+
+    Resultado: Status 200 OK con el array de las últimas 50 lecturas guardadas en MongoDB.

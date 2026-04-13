@@ -1,0 +1,34 @@
+-- 1. Crear la base de datos
+CREATE DATABASE dismarf_db;
+
+-- 2. Conectarse a la base de datos (en terminal: \c dismarf_db)
+
+-- 3. Tabla de Roles
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) UNIQUE NOT NULL
+);
+
+INSERT INTO roles (nombre) VALUES ('ADMIN'), ('SUPERVISOR'), ('ALMACENISTA');
+
+-- 4. Tabla de Usuarios
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    rol_id INTEGER REFERENCES roles(id),
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. Tabla de Cavas (Congeladores)
+CREATE TABLE cavas (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ubicacion VARCHAR(150),
+    mac_esp32 VARCHAR(17) UNIQUE NOT NULL, -- Identificador único del hardware
+    temp_min DECIMAL(5,2) DEFAULT -20.00,
+    temp_max DECIMAL(5,2) DEFAULT -10.00,
+    estado BOOLEAN DEFAULT TRUE,
+    ultima_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
