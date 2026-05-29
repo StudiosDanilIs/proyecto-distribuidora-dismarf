@@ -1,0 +1,96 @@
+1. Diseño de Persistencia Políglota (Bases de Datos)
+
+Separar las bases de datos por su naturaleza es una excelente decisión para este caso de uso.
+
+    PostgreSQL (Relacional): Será el núcleo transaccional. Manejará la lógica de negocio, el control de las cavas (congeladores) y la gestión de usuarios y roles. Garantizará la integridad ACID para los datos críticos.
+
+    MongoDB (NoSQL): Actuará como base de datos de series temporales (Time-Series). Estará dedicada exclusivamente a recibir el alto volumen de datos no estructurados generados por la telemetría de los sensores ESP32 (temperatura, humedad, estado de puertas).
+
+2. Planificación de Microservicios y Módulos (Backend en Node.js)
+
+Para este sistema, desarrollaremos 4 microservicios principales usando Express.js (o Fastify, si prefieres mayor rendimiento).
+A. Microservicio de Identidad y Acceso (Auth Service)
+
+Encargado de la seguridad y validación de todo el ecosistema.
+
+    Base de Datos: PostgreSQL.
+
+    Entidades principales: Usuarios, Roles (Admin, Supervisor, Almacenista), Sesiones.
+
+    Lógica: Autenticación de usuarios de la app móvil y generación de tokens JWT para proteger las rutas internas.
+
+    Endpoints (CRUD):
+
+        POST /auth/login (Generación de JWT).
+
+        POST /users (Registro de personal).
+
+        GET /users, PUT /users/:id, DELETE /users/:id (Gestión de usuarios).
+
+B. Microservicio de Gestión de Activos (Cavas Service)
+
+Administra la información física de las cavas de la distribuidora.
+
+    Base de Datos: PostgreSQL.
+
+    Entidades principales: Cavas (ID, Nombre, Ubicación, Temp_Min, Temp_Max, MAC_ESP32).
+
+    Lógica: Define los umbrales operativos de cada nevera. Cruza la dirección MAC del ESP32 con una cava específica en Dismarf para saber de dónde provienen los datos.
+
+    Endpoints (CRUD):
+
+        POST /cavas (Registrar nueva cava y umbrales).
+
+        GET /cavas, GET /cavas/:id (Listar inventario de cavas).
+
+        PUT /cavas/:id (Actualizar parámetros de frío).
+
+        DELETE /cavas/:id.
+
+C. Microservicio de Ingestión IoT y Alertas (Telemetry Service)
+
+El corazón del monitoreo predictivo. Diseñado para alta concurrencia.
+
+    Base de Datos: MongoDB.
+
+    Entidades principales: Telemetria (Timestamp, MAC_ESP32, Temperatura, Humedad, Puerta_Abierta).
+
+    Lógica:
+
+        Recibe el JSON enviado por el ESP32.
+
+        Solo tiene métodos de "Creación" y "Lectura" (los datos históricos de los sensores no se actualizan ni se borran, son inmutables).
+
+        Motor de Reglas: Evalúa en tiempo real si la lectura actual supera la Temp_Max o si el Reed Switch indica puerta abierta. Si hay anomalía, despacha un evento crítico.
+
+    Endpoints:
+
+        POST /telemetry/ingest (Ruta ultrarrápida para los ESP32).
+
+        GET /telemetry/history/:mac (Para mostrar gráficas en el frontend).
+
+D. Microservicio de Sincronización (Sync Engine Service)
+
+Vital para la Fase 3 del ecosistema móvil Offline-First.
+
+    Base de Datos: PostgreSQL.
+
+    Entidades principales: Auditorias, Inspecciones_Calidad, Sync_Logs.
+
+    Lógica: Se encarga de recibir paquetes de datos masivos (auditorías guardadas localmente en el SQLite/WatermelonDB del teléfono) cuando el operario recupera la conexión a internet. Aplica estrategias de resolución de conflictos como Last Write Wins.
+
+    Endpoints:
+
+        POST /sync/push (Recibe registros locales de la app).
+
+        GET /sync/pull (Envía actualizaciones del servidor a la app).
+
+3. Flujo de Trabajo y Entorno de Desarrollo (Sin Docker)
+
+Ya que operaremos directo en el entorno de tu máquina:
+
+    Bases de Datos locales: Deberás instalar y correr los servicios de PostgreSQL y MongoDB como demonios/servicios en tu sistema operativo.
+
+    Estructura de Carpetas: Crearemos un monorepositorio en Git con carpetas separadas para cada microservicio (/auth-service, /cavas-service, /iot-service). Cada uno tendrá su propio package.json y dependencias (ej. pg para Postgres, mongoose para Mongo).
+
+    API Gateway Local: En lugar de Kong/Nginx en contenedores, podemos levantar un pequeño proxy en Node.js o simplemente consumir los puertos directamente en fase de desarrollo.

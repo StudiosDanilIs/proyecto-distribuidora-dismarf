@@ -1,0 +1,28 @@
+Simular el envío de datos directos del ESP32 (Ingesta Aislada)
+
+    Método: POST
+
+    URL: http://localhost:3001/api/telemetry/ingest (Nota que usamos el puerto 3001)
+
+    Headers: Content-Type: application/json (No requiere Token)
+
+    Body (JSON):
+{
+    "mac_esp32": "AA:BB:CC:DD:EE:FF",
+    "temperatura": -19.2,
+    "humedad": 42.5,
+    "puerta_abierta": false
+}
+Resultado Esperado: Status: 201 Created con el mensaje {"status": "ok", "msg": "Telemetría guardada"}.
+
+2. Consultar el historial directamente a la base de datos
+
+    Método: GET
+
+    URL: http://localhost:3001/api/telemetry/history/AA:BB:CC:DD:EE:FF
+
+    Headers: No requiere.
+
+    Body: (Vacío)
+
+    Resultado Esperado: Status: 200 OK. Te devolverá un arreglo con los datos crudos desde MongoDB, incluyendo el _id autogenerado y el timestamp exacto del registro.

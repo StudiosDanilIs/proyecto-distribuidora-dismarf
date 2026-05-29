@@ -1,0 +1,13 @@
+Administración de proyectos.
+• Plan de desarrollo de software.
+• Plan de fase.
+• Plan de iteración.
+• Administración del riesgo:
+- Identificación de riesgos: Lista de riesgo.
+- Evaluación del riesgo.
+- Plan de Administración de riesgo.
+- Seguimiento.
+• Administración y configuración del cambio.
+• Configuración del entorno de desarrollo.
+
+y otros aspectos como definir los diagramas como se desarrolla cada aspecto

@@ -1,0 +1,17 @@
+Componentes de Caracas
+Cable = 6usd por 10mtrs son necesarios 3 cables por temas de color o se va viendo o por lo menos 2 
+Sensor Dht22 = 8usd por unidad
+Cargador Batería = 7usd por unidad
+Batería Litio = 6usd por unidad
+
+Componentes de Merida
+Esp32 = 18usd por unidad
+Sensor Magnetico = 5usd por unidad
+Buzzer = 4usd por 3unidades
+
+Componentes de Aliexpress
+Boton Pulsador = estimado de 3usd puede variar
+Led Indicador = estimado de 3.5usd puede variar
+
+Total a gastar sin contar los componentes de Aliexpress es de 60usd
+Total a gastar contando componentes de Aliexpress puede ser de 68-75usd puede ser un poco menos peor al ser de china el envió quien sabe peor lo mas probable es que menos de 70usd será gastado

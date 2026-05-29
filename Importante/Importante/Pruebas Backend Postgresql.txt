@@ -1,0 +1,88 @@
+Para usar esto antes se debe montar el servidor con node index.js
+Módulo 1: Autenticación (/api/auth)
+
+Estos endpoints son públicos y no requieren Token.
+
+1. Registrar un nuevo usuario
+
+    Método: POST
+
+    URL: http://localhost:3000/api/auth/register
+
+    Body (JSON):
+{
+    "nombre": "Supervisor Juan",
+    "email": "juan@dismarf.com",
+    "password": "mi_clave_secreta",
+    "rol_id": 2
+}
+Resultado esperado: Status: 201 Created y el JSON del usuario (sin mostrar el password encriptado).
+
+2. Iniciar Sesión (Obtener Token JWT)
+
+    Método: POST
+
+    URL: http://localhost:3000/api/auth/login
+
+    Body (JSON):
+{
+    "email": "juan@dismarf.com",
+    "password": "mi_clave_secreta"
+}
+Resultado esperado: Status: 200 OK y el string con el "token". (Recuerda copiar este token y ponerlo en la pestaña "Auth -> Bearer" para las siguientes pruebas).
+
+Módulo 2: Gestión de Cavas (/api/cavas)
+
+TODOS estos endpoints requieren que configures el Token en la pestaña Auth (Bearer).
+
+3. Crear una nueva Cava
+
+    Método: POST
+
+    URL: http://localhost:3000/api/cavas
+
+    Body (JSON):
+{
+    "nombre": "Cava Secundaria Carnes",
+    "ubicacion": "Almacén Sur",
+    "mac_esp32": "AA:BB:CC:DD:EE:FF",
+    "temp_min": -18.00,
+    "temp_max": -10.00
+}
+Resultado esperado: Status: 201 Created.
+
+4. Listar todas las Cavas (El que acabas de hacer)
+
+    Método: GET
+
+    URL: http://localhost:3000/api/cavas
+
+    Body: (Vacío)
+
+    Resultado esperado: Status: 200 OK y un array [ {...}, {...} ] con todas las cavas registradas.
+
+5. Actualizar una Cava específica
+
+    Método: PUT
+
+    URL: http://localhost:3000/api/cavas/1 (El "1" al final es el ID de la cava que quieres editar)
+
+    Body (JSON): Vamos a simular que cambiamos los parámetros de temperatura o desactivamos la cava por mantenimiento.
+{
+    "nombre": "Cava Principal Congelados",
+    "ubicacion": "Almacén Zona Norte",
+    "temp_min": -25.00,
+    "temp_max": -20.00,
+    "estado": false 
+}
+Resultado esperado: Status: 200 OK y el JSON reflejando los nuevos valores.
+
+6. Eliminar una Cava
+
+    Método: DELETE
+
+    URL: http://localhost:3000/api/cavas/1 (El "1" es el ID a borrar)
+
+    Body: (Vacío)
+
+    Resultado esperado: Status: 200 OK confirmando que fue eliminada del sistema. (Nota: Si intentas hacer un GET después de esto, ya no debería aparecer).
