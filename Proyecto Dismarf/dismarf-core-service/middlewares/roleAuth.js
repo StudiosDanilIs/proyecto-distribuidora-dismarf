@@ -1,11 +1,8 @@
 const checkRole = (rolesPermitidos) => {
     return (req, res, next) => {
         try {
-            // Asumimos que verifyToken ya extrajo los datos en req.usuario
-            // CONVERSIÓN ROBUSTA: Garantiza que siempre sea un número entero
             const userRole = parseInt(req.usuario.rol_id, 10);
 
-            // Validamos correctamente la inclusión
             if (rolesPermitidos.includes(userRole)) {
                 next();
             } else {

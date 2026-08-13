@@ -1,7 +1,6 @@
 import PushNotification from 'react-native-push-notification';
 import { PermissionsAndroid, Platform } from 'react-native';
 
-// Solicitar permiso en Android 13+
 export const solicitarPermisosNotificacion = async () => {
   if (Platform.OS === 'android' && Platform.Version >= 33) {
     await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
@@ -15,12 +14,11 @@ PushNotification.configure({
   requestPermissions: Platform.OS === 'ios',
 });
 
-// Crear el canal (Obligatorio)
 PushNotification.createChannel(
   {
     channelId: "alertas-dismarf", 
     channelName: "Alertas Críticas",
-    importance: 4, // 4 = Alta importancia (Sonido y alerta visual)
+    importance: 4,
     vibrate: true,
   },
   (created) => console.log(`Canal creado: ${created}`)

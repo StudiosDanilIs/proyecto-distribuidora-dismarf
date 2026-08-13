@@ -1,4 +1,3 @@
-// controllers/perfilController.js
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 
@@ -17,7 +16,6 @@ exports.actualizarPerfil = async (req, res) => {
             await pool.query('UPDATE usuarios SET nombre = $1 WHERE id = $2', [nombre, userId]);
         }
 
-        // Guardamos el ícono de perfil predeterminado
         if (icono_perfil !== undefined) {
             await pool.query('UPDATE usuarios SET icono_perfil = $1 WHERE id = $2', [icono_perfil, userId]);
         }

@@ -52,8 +52,35 @@ const obtenerHistorialAlertas = async (req, res) => {
     }
 };
 
+
+const recibirAlertaAutomatica = async (req, res) => {
+    const { cava_id, tipo, mensaje, valor_registrado } = req.body;
+    try {
+        // Validación inteligente: Revisamos si la cava YA TIENE una alerta activa.
+        // Esto evita que el sistema se llene de 100 alertas iguales por minuto.
+        const activa = await pool.query(
+            'SELECT id FROM alertas WHERE cava_id = $1 AND resuelta = FALSE',
+            [cava_id]
+        );
+        
+        // Si no hay alerta activa, la creamos
+        if (activa.rows.length === 0) {
+            await pool.query(
+                'INSERT INTO alertas (cava_id, tipo, mensaje, valor_registrado, resuelta) VALUES ($1, $2, $3, $4, FALSE)',
+                [cava_id, tipo, mensaje, valor_registrado]
+            );
+            console.log("🚨 NUEVA ALERTA CREADA EN BASE DE DATOS");
+        }
+        res.status(201).json({ msg: "Procesado" });
+    } catch (error) {
+        console.error("Error guardando alerta automática:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     obtenerAlertasActivas,
     resolverAlerta,
-    obtenerHistorialAlertas
+    obtenerHistorialAlertas,
+    recibirAlertaAutomatica
 };

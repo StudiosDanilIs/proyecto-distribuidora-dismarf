@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const cors = require('cors');
 
@@ -11,18 +10,19 @@ const inventarioRoutes = require('./routes/inventario');
 const perfilRoutes = require('./routes/perfil');
 const bitacoraRoutes = require('./routes/bitacora');
 const reporteRoutes = require('./routes/reportes');
+const cavasController = require('./controllers/cavasController'); 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Radar de peticiones
 app.use((req, res, next) => {
     console.log("Petición recibida en el Core:", req.method, req.url);
     next();
 });
 
-// Rutas
+app.post('/api/cavas/telemetria', cavasController.recibirTelemetria);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/cavas', cavaRoutes);
 app.use('/api/usuarios', rutasUsuarios);
@@ -32,6 +32,7 @@ app.use('/api/inventario', inventarioRoutes);
 app.use('/api/perfil', perfilRoutes);
 app.use('/api/bitacora', bitacoraRoutes);
 app.use('/api/reportes', reporteRoutes);
+app.use('/api/alertas/automatica', rutasAlertas);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

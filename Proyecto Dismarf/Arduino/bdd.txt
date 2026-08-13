@@ -1,0 +1,117 @@
+-- ====================================================================
+-- SISTEMA DISMARF - ESQUEMA DE BASE DE DATOS (POSTGRESQL)
+-- Ingeniería y Desarrollo: Studios Daniels
+-- ====================================================================
+
+-- ====================================================================
+-- 1. TABLA DE ROLES
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS roles (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion TEXT
+);
+
+-- INSERCIÓN INICIAL DE ROLES POR DEFECTO
+INSERT INTO roles (nombre) VALUES 
+    ('ADMIN'), 
+    ('SUPERVISOR'), 
+    ('ALMACENISTA')
+ON CONFLICT (nombre) DO NOTHING;
+
+-- ====================================================================
+-- 2. TABLA DE USUARIOS
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS usuarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    rol_id INT REFERENCES roles(id) ON DELETE SET NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    pregunta_seguridad VARCHAR(255),
+    respuesta_seguridad VARCHAR(255),
+    icono_perfil VARCHAR(50)
+);
+
+-- ====================================================================
+-- 3. TABLA DE CAVAS
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS cavas (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ubicacion VARCHAR(150),
+    mac_esp32 VARCHAR(50) UNIQUE,
+    temp_min DECIMAL(5,2) NOT NULL,
+    temp_max DECIMAL(5,2) NOT NULL,
+    estado BOOLEAN DEFAULT TRUE,
+    tipo_producto VARCHAR(100) DEFAULT 'Mixto',
+    capacidad_ocupada INT DEFAULT 0,
+    ultimo_mantenimiento DATE DEFAULT CURRENT_DATE
+);
+
+-- ====================================================================
+-- 4. TABLA DE INVENTARIO
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS inventario (
+    id SERIAL PRIMARY KEY,
+    producto VARCHAR(150) NOT NULL,
+    cantidad NUMERIC NOT NULL,
+    fecha_ingreso DATE NOT NULL,
+    fecha_vencimiento DATE NOT NULL,
+    cava_id INT REFERENCES cavas(id) ON DELETE CASCADE,
+    estado_calidad VARCHAR(50) DEFAULT 'Óptimo'
+);
+
+-- ====================================================================
+-- 5. TABLA DE MOVIMIENTOS DE INVENTARIO
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS movimientos_inventario (
+    id SERIAL PRIMARY KEY,
+    cava_id INT REFERENCES cavas(id) ON DELETE CASCADE,
+    producto VARCHAR(255),
+    tipo_movimiento VARCHAR(50),
+    cantidad NUMERIC,
+    unidad VARCHAR(50),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ====================================================================
+-- 6. TABLA DE ALERTAS
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS alertas (
+    id SERIAL PRIMARY KEY,
+    cava_id INT REFERENCES cavas(id) ON DELETE CASCADE,
+    tipo VARCHAR(50),
+    mensaje TEXT,
+    valor_registrado NUMERIC(5,2),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resuelta BOOLEAN DEFAULT FALSE
+);
+
+-- ====================================================================
+-- 7. TABLA DE AUDITORÍAS
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS auditorias (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE SET NULL,
+    cava_id INT REFERENCES cavas(id) ON DELETE CASCADE,
+    fecha_inspeccion TIMESTAMP,
+    estado_limpieza VARCHAR(50),
+    observaciones TEXT,
+    sincronizado_el TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ====================================================================
+-- 8. TABLA DE BITÁCORA
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS bitacora (
+    id_bitacora SERIAL PRIMARY KEY,
+    id_usuario INT REFERENCES usuarios(id) ON DELETE SET NULL,
+    nombre_usuario VARCHAR(100),
+    accion VARCHAR(50), 
+    modulo VARCHAR(50), 
+    detalle TEXT,       
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

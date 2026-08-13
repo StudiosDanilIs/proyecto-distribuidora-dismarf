@@ -1,12 +1,11 @@
-// dismarf-core-service/routes/cavas.js
 const express = require('express');
 const router = express.Router();
-const cavasController = require('../controllers/cavasController');
 const verificarToken = require('../middlewares/authMiddleware');
+const cavasController = require('../controllers/cavasController');
 
-// TODAS estas rutas están protegidas por verificarToken
+router.get('/', cavasController.obtenerCavas);
+
 router.post('/', verificarToken, cavasController.crearCava);
-router.get('/', verificarToken, cavasController.obtenerCavas);
 router.put('/:id', verificarToken, cavasController.actualizarCava);
 router.delete('/:id', verificarToken, cavasController.eliminarCava);
 

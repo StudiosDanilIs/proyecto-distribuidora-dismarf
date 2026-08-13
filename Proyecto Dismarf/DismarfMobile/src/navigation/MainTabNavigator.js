@@ -28,7 +28,6 @@ const MainTabNavigator = () => {
         tabBarActiveTintColor: '#0284C7',
         tabBarInactiveTintColor: '#94A3B8',
         headerShown: false,
-        // Configuración de la barra premium y flotante
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
           height: Platform.OS === 'ios' ? 85 : 70,

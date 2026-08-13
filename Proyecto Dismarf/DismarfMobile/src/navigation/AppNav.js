@@ -19,7 +19,6 @@ const Stack = createNativeStackNavigator();
 const AppNav = () => {
   const { userToken } = useContext(AuthContext);
 
-  // Opciones de estilo global para las cabeceras secundarias (Ice-Tech)
   const premiumHeaderOptions = {
     headerShown: true,
     headerStyle: {
@@ -31,14 +30,13 @@ const AppNav = () => {
       fontSize: 18,
       color: '#0F172A',
     },
-    headerShadowVisible: false, // Quita la línea dura inferior para mayor limpieza visual
+    headerShadowVisible: false,
   };
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {userToken !== null ? (
-          // RUTAS PROTEGIDAS
           <>
             <Stack.Screen name="Main" component={MainTabNavigator} />
             
@@ -60,7 +58,6 @@ const AppNav = () => {
             />
           </>
         ) : (
-          // RUTAS PÚBLICAS
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />

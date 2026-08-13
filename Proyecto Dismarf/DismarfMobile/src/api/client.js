@@ -1,8 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// REEMPLAZA ESTA IP POR LA IP LOCAL DE TU COMPUTADORA
-const API_URL = 'http://localhost:4000/api'; 
+const API_URL = 'http://TU IP:3000'; 
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -11,18 +10,20 @@ const apiClient = axios.create({
   },
 });
 
-// Interceptor para inyectar el Token automáticamente en cada petición
 apiClient.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('userToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default apiClient;
+
+export const iotClient = axios.create({
+  baseURL: 'http://TU IP:3001', 
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});

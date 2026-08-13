@@ -1,10 +1,7 @@
-// controllers/userController.js
 const pool = require('../db'); 
 
-// 1: Obtener la lista completa del personal incluyendo su ícono de perfil
 const obtenerUsuarios = async (req, res) => {
     try {
-        // Añadimos 'icono_perfil' a la consulta maestra para embellecer la lista en la app
         const result = await pool.query(
             'SELECT id, nombre, email, rol_id, activo, icono_perfil FROM usuarios ORDER BY id ASC'
         );
@@ -15,7 +12,6 @@ const obtenerUsuarios = async (req, res) => {
     }
 };
 
-// 2: Cambiar el estado operativo (Suspender/Activar)
 const cambiarEstadoUsuario = async (req, res) => {
     const { id } = req.params;
     const { activo } = req.body; 
@@ -28,7 +24,6 @@ const cambiarEstadoUsuario = async (req, res) => {
     }
 };
 
-// 3: Cambiar el Rol Jerárquico del Usuario
 const cambiarRolUsuario = async (req, res) => {
     const { id } = req.params;
     const nuevoRol = req.body.rol_id || req.body.id_rol; 
@@ -41,7 +36,6 @@ const cambiarRolUsuario = async (req, res) => {
     }
 };
 
-// 4: Eliminar Cuenta de Usuario
 const eliminarUsuario = async (req, res) => {
     const { id } = req.params;
     try {

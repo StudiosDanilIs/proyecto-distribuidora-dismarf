@@ -2,11 +2,7 @@ const db = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-/**
- * Registra un nuevo empleado en el sistema incluyendo pregunta y respuesta de seguridad.
- */
 exports.registrarUsuario = async (req, res) => {
-    // Log para verificar qué está recibiendo exactamente el backend
     console.log("---> [REGISTER] Payload recibido en backend:", req.body);
 
     const { nombre, email, password, rol_id, pregunta_seguridad, respuesta_seguridad } = req.body;
@@ -25,15 +21,11 @@ exports.registrarUsuario = async (req, res) => {
         console.log("---> [REGISTER] ¡Éxito! Usuario guardado:", result.rows[0]);
         res.status(201).json({ mensaje: 'Usuario registrado con éxito', usuario: result.rows[0] });
     } catch (error) {
-        // Imprimimos el error real en la terminal para no estar a ciegas
         console.error("---> [REGISTER ERROR DB]:", error.message);
         res.status(500).json({ error: 'Error al registrar usuario. Verifica la terminal del backend.' }); 
     }
 };
 
-/**
- * Autentica un usuario y devuelve un Token JWT.
- */
 exports.loginUsuario = async (req, res) => {
     const { email, password } = req.body;
 
@@ -44,6 +36,12 @@ exports.loginUsuario = async (req, res) => {
         }
 
         const usuario = result.rows[0];
+
+        if (usuario.activo === false) {
+            return res.status(403).json({ 
+                error: 'ACCESO DENEGADO: Tu cuenta ha sido suspendida. Contacta a un Administrador.' 
+            });
+        }
 
         const passwordValida = await bcrypt.compare(password, usuario.password_hash);
         if (!passwordValida) {
@@ -80,9 +78,6 @@ exports.loginUsuario = async (req, res) => {
     }
 };
 
-/**
- * Obtiene la pregunta de seguridad asociada al email proporcionado.
- */
 exports.getSecurityQuestion = async (req, res) => {
     console.log("---> [RECOVERY] Buscando pregunta para email:", req.body.email);
     const { email } = req.body;
@@ -103,9 +98,6 @@ exports.getSecurityQuestion = async (req, res) => {
     }
 };
 
-/**
- * Restablece la contraseña si la respuesta de seguridad es correcta.
- */
 exports.resetPasswordSecurity = async (req, res) => {
     console.log("---> [RESET] Intentando resetear clave para:", req.body.email);
     const { email, respuesta_seguridad, nueva_password } = req.body;
